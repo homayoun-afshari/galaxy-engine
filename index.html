@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" name="viewport" content="width=device-width, initials-scale=1, maximum-scale=1, user-scalable=no">
+    <title>Galaxy Engine</title>
+	<link rel="icon" href="favicon.ico" type="image/x-icon">
+	<link rel="stylesheet" href="main.css">
+	<script>
+		const initials = {
+			gravitationalConstantThirdRoot: Math.pow(1e2, 1/3),
+			frameDuration: 50,
+			stepTotal: 400,
+			temperatureFactor: 0.2,
+			alphabet: 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789',
+			palette: ['#1abc9c', '#3498db', '#fd79a8', '#a29bfe', '#f1c40f', '#e67e22', '#e74c3c', '#95a5a6', '#aaa69d'],
+			sldMassLimits: [1, 10, 500, 2000],
+			sldRadiusLimits: [10, 10, 40, 40],
+			sldTemperatureLimits: [100, 300, 1000, 2000],
+			sldSpeedLimits: [1, 5, 50, 500],
+			sldDirectionLimits: [-Math.PI, -Math.PI, Math.PI, Math.PI],
+			sldRateLimits: [0.1, 0.1, 10, 10],
+			sldScaleLimits: [0.1, 0.1, 1, 1],
+		};
+	</script>
+	<script src="main.js"></script>
+	<script src="galaxy.js"></script>
+</head>
+<body>
+<div id="msgStart" class="message">
+	<div class="textBox">
+		<span>Click on 'Load' or 'Add' buttons to create astronomical objects</span>
+	</div>
+</div>
+<div id="errType" class="error compact">
+	<div class="textBox">
+		<span>Error in file type!</span>
+	</div>
+</div>
+<div id="errDecoding" class="error compact">
+	<div class="textBox">
+		<span>Error in file decoding!</span>
+	</div>
+</div>
+<div id="errContent" class="error compact">
+	<div class="textBox">
+		<span>Error in file content!</span>
+	</div>
+</div>
+<div id="msgCreation" class="message compact">
+	<div class="textBox">
+		<span>You can left-click to create and right-click to cancel</span>
+	</div>
+</div>
+<div id="msgWait" class="message compact">
+	<div class="textBox">
+		<span>Please wait until the loading is done...</span>
+	</div>
+</div>
+<div id="msgLoad" class="message compact">
+	<div class="textBox">
+		<span>If you haven't saved your data, everything will be lost.</span>
+	</div>
+	<a id="btnDeny0" class="button">
+		<span class="title">Deny</span>
+	</a>
+	<a id="btnAllow0" class="button">
+		<span class="title">Allow</span>
+	</a>
+</div>
+<div id="msgRestart" class="message compact">
+	<div class="textBox">
+		<span>If you haven't saved your data, everything will be lost.</span>
+	</div>
+	<a id="btnDeny1" class="button">
+		<span class="title">Deny</span>
+	</a>
+	<a id="btnAllow1" class="button">
+		<span class="title">Allow</span>
+	</a>
+</div>
+<div id="management" class="compact">
+	<label class="input">
+		<span class="title">Name</span>
+		<span class="notice">It's good to have a name!</span>
+        <input id="inpName" name="name" type="text" autocomplete="off" value="saga">
+	</label>
+	<div class="input">
+		<span class="title">Material</span>
+		<div id="pckMaterial" class="picker">
+			<span class="item"></span>
+		</div>
+	</div>
+	<div class="input">
+		<span class="title">Mass</span>
+		<span class="notice"></span>
+		<div id="sldMass" class="slider abrupt" data-mapping="curve" data-mask="Rock,Meteor,Asteroid,Moon,Dwarf Planet,Small Planet, Average Planet,Large Planet,Very Large Planet,Star,Neutron Star" data-constraints="Feather!,Black Hole!">
+			<span class="line"></span>
+			<span class="handle"></span>
+		</div>
+	</div>
+	<div class="input">
+		<span class="title">Temperature</span>
+		<span class="notice">Fill!</span>
+		<div id="sldTemperature" class="slider abrupt" data-mask="Freezing,Very Cold,Cold,Cool,Pleasant,Temperate,Warm,Very Warm,Hot" data-constraints="Frigid!,Scorching!">
+			<span class="line"></span>
+			<span class="handle"></span>
+		</div>
+	</div>
+	<div class="input">
+		<span class="title">Speed</span>
+		<span class="notice"></span>
+		<div id="sldSpeed" class="slider abrupt" data-mapping="curve" data-mask="Sluggish,Super Slow,Very Slow, Slow,Average,Fast, Very Fast,Super Fast,Speedy" data-constraints="Stationary!,Flash!">
+			<span class="line"></span>
+			<span class="handle"></span>
+		</div>
+	</div>
+	<div class="input">
+		<span class="title">Direction</span>
+		<span class="notice">Fill!</span>
+		<div id="sldDirection" class="slider abrupt" data-mask="-180,180" data-unit="°">
+			<span class="line"></span>
+			<span class="handle"></span>
+		</div>
+	</div>
+	<div class="input">
+		<span class="title">Origin</span>
+		<div id="rdoOrigin" class="radio empty">
+			<div class="box">
+				<span></span>
+			</div>
+			<span class="description">Set As Origin</span>
+		</div>
+	</div>
+	<a id="btnRemove" class="button">
+		<span class="title">Remove</span>
+	</a>
+	<a id="btnRevert" class="button">
+		<span class="title">Revert</span>
+	</a>
+	<a id="btnClose" class="button">
+		<span class="title">Close</span>
+	</a>
+</div>
+<div id="galaxy" class="abrupt">
+	<div class="projectile abrupt">
+		<span></span>
+	</div>
+	<svg>
+		<path class="trajectory" d=""></path>
+	</svg>
+</div>
+<div id="screen">
+	<div class="guides hidden abrupt">
+		<div class="vector">
+			<span class="shaft"></span>
+			<span class="caretUp"></span>
+			<span class="caretDown"></span>
+		</div>
+		<span class="name"></span>
+	</div>
+</div>
+<div id="control">
+	<a id="btnResize" class="button">
+		<span class="title">Minimize</span>
+		<span class="title">Maximize</span>
+	</a>
+	<a id="btnFit" class="button">
+		<span class="title">Fit</span>
+	</a>
+	<a id="btnLoad" class="button">
+		<span class="title">Load</span>
+	</a>
+	<a id="btnSave" class="button disabled">
+		<span class="title">Save</span>
+	</a>
+	<a id="btnAdd" class="button">
+		<span class="title">Add</span>
+	</a>
+	<a id="btnRestart" class="button disabled">
+		<span class="title">Restart</span>
+	</a>
+	<a id="btnRoll" class="button disabled">
+		<span class="title">Play</span>
+		<span class="title">Pause</span>
+	</a>
+	<div class="input">
+		<span class="title">Playback Rate</span>
+		<span class="notice"></span>
+		<div id="sldRate" class="slider abrupt" data-default="1" data-mapping="curve">
+			<span class="line"></span>
+			<span class="handle"></span>
+		</div>
+	</div>
+	<div class="input">
+		<span class="title">Scale</span>
+		<span class="notice"></span>
+		<div id="sldScale" class="slider abrupt" data-default="1" data-mapping="curve">
+			<span class="line"></span>
+			<span class="handle"></span>
+		</div>
+	</div>
+	<div class="input">
+		<span class="title">Trajectories</span>
+		<div id="rdoTrajectory" class="radio">
+			<div class="box">
+				<span></span>
+			</div>
+			<span class="description">Show Paths and Orbits</span>
+		</div>
+	</div>
+	<div class="input">
+		<span class="title">Guides</span>
+		<div id="rdoGuides" class="radio">
+			<div class="box">
+				<span></span>
+			</div>
+			<span class="description">Show Name and Velocity</span>
+		</div>
+	</div>
+	<div class="input">
+		<span class="title">Explosion</span>
+		<div id="rdoExplosion" class="radio">
+			<div class="box">
+				<span></span>
+			</div>
+			<span class="description">Enable Explosion on Collision</span>
+		</div>
+	</div>
+</div>
+</body>
+</html>
