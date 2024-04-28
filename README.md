@@ -2,6 +2,9 @@
 <p align="center">
   <img src="demo/demo.gif" width="75%">
 </p>
+<p align="center">
+  <img src="demo/01.PNG" width="18%">&#9;<img src="demo/02.PNG" width="18%">&#9;<img src="demo/03.PNG" width="18%">&#9;<img src="demo/04.PNG" width="18%">&#9;<img src="demo/05.PNG" width="18%">
+</p>
 Galaxy Engine is a two-dimensional gravity simulator based on <a href=" https://en.wikipedia.org/wiki/Newton%27s_law_of_universal_gravitation">Newton's law of universal gravitation</a>. This simulator is part of an educational web application, trying to provide a minimal interactive demonstration of how gravity works in large scales. The simulator is written in JavaScript and is compatible with all the modern browsers. However, Galaxy Engine is not just a humble simulator! It is a complete web application. In the following I explain it in more detail.
 
 # Code Structure
