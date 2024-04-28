@@ -1,4 +1,4 @@
-![CodeCogsEqn](https://github.com/homayoun-afshari/galaxy-engine/assets/120579983/83c5c798-7c87-4c77-8388-0ecffef2a9f7)# Galaxy Engine
+# Galaxy Engine
 <p align="center">
   <img src="demo/demo.gif" width="75%">
 </p>
